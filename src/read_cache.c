@@ -226,7 +226,8 @@ void dvdnav_pre_cache_blocks(read_cache_t *self, int sector, size_t block_count)
   pthread_mutex_unlock(&self->lock);
 }
 
-int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf) {
+int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf,
+                            size_t* len) {
   int i, use;
   int start;
   int size;
@@ -277,6 +278,7 @@ int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, 
     chunk = &self->chunk[use];
     read_ahead_buf = chunk->cache_buffer + chunk->cache_read_count * DVD_VIDEO_LB_LEN;
     *buf = chunk->cache_buffer + (sector - chunk->cache_start_sector) * DVD_VIDEO_LB_LEN;
+    *len = chunk->cache_buffer_size - (sector - chunk->cache_start_sector) * DVD_VIDEO_LB_LEN;
     chunk->usage_count++;
     pthread_mutex_unlock(&self->lock);
 

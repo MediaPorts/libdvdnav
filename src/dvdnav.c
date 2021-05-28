@@ -339,7 +339,7 @@ int64_t dvdnav_convert_time(dvd_time_t *time) {
  * Most of the code in here is copied from xine's MPEG demuxer
  * so any bugs which are found in that should be corrected here also.
  */
-static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p,
+static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p, size_t buff_size,
                                     dsi_t *nav_dsi, pci_t *nav_pci) {
   int32_t        bMpeg1 = 0;
   uint32_t       nHeaderLen;
@@ -353,15 +353,18 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p,
 
     if (bMpeg1) {
       p += 12;
+      buff_size -= 12;
     } else { /* mpeg2 */
       nStuffingBytes = p[0xD] & 0x07;
       p += 14 + nStuffingBytes;
+      buff_size -= 14 + nStuffingBytes;
     }
   }
 
   if (p[3] == 0xbb) { /* program stream system header */
     nHeaderLen = (p[4] << 8) | p[5];
     p += 6 + nHeaderLen;
+    buff_size -= 6 + nHeaderLen;
   }
 
   /* we should now have a PES packet here */
@@ -375,6 +378,7 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p,
 
   nHeaderLen = 6;
   p += nHeaderLen;
+  buff_size -= nHeaderLen;
 
   if (nStreamID == 0xbf) { /* Private stream 2 */
 #if 0
@@ -386,7 +390,11 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p,
 #endif
 
     if(p[0] == 0x00) {
+#if DVDREAD_VERSION >= DVDREAD_VERSION_CODE(7,0,0)
+      navRead_PCI(nav_pci, p+1, buff_size - 1);
+#else
       navRead_PCI(nav_pci, p+1);
+#endif
     }
 
     p += nPacketLen;
@@ -395,7 +403,12 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p,
     if(p[6] == 0x01) {
       nPacketLen = p[4] << 8 | p[5];
       p += 6;
+      buff_size -= 6;
+#if DVDREAD_VERSION >= DVDREAD_VERSION_CODE(7,0,0)
+      navRead_DSI(nav_dsi, p+1, buff_size - 1);
+#else
       navRead_DSI(nav_dsi, p+1);
+#endif
     }
     return 1;
   }
@@ -585,14 +598,14 @@ dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
         /* we have to skip the first VOBU when seeking in a multiangle feature,
          * because it might belong to the wrong angle */
         block = this->position_next.cell_start + this->position_next.block;
-        result = dvdnav_read_cache_block(this->cache, block, 1, buf);
+        result = dvdnav_read_cache_block(this->cache, block, 1, buf, len);
         if(result <= 0) {
           printerr("Error reading NAV packet.");
           pthread_mutex_unlock(&this->vm_lock);
           return DVDNAV_STATUS_ERR;
         }
         /* Decode nav into pci and dsi. Then get next VOBU info. */
-        if(!dvdnav_decode_packet(this, *buf, &this->dsi, &this->pci)) {
+        if(!dvdnav_decode_packet(this, *buf, *len, &this->dsi, &this->pci)) {
           printerr("Expected NAV packet but none found.");
           pthread_mutex_unlock(&this->vm_lock);
           return DVDNAV_STATUS_ERR;
@@ -888,7 +901,7 @@ dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
     }
 
     /* at the start of the next VOBU -> expecting NAV packet */
-    result = dvdnav_read_cache_block(this->cache, this->vobu.vobu_start + this->vobu.vobu_next, 1, buf);
+    result = dvdnav_read_cache_block(this->cache, this->vobu.vobu_start + this->vobu.vobu_next, 1, buf, len);
 
     if(result <= 0) {
       printerr("Error reading NAV packet.");
@@ -896,7 +909,7 @@ dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
       return DVDNAV_STATUS_ERR;
     }
     /* Decode nav into pci and dsi. Then get next VOBU info. */
-    if(!dvdnav_decode_packet(this, *buf, &this->dsi, &this->pci)) {
+    if(!dvdnav_decode_packet(this, *buf, *len, &this->dsi, &this->pci)) {
       printerr("Expected NAV packet but none found.");
       pthread_mutex_unlock(&this->vm_lock);
       return DVDNAV_STATUS_ERR;
@@ -936,7 +949,7 @@ dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
   }
 
   this->vobu.blockN++;
-  result = dvdnav_read_cache_block(this->cache, this->vobu.vobu_start + this->vobu.blockN, 1, buf);
+  result = dvdnav_read_cache_block(this->cache, this->vobu.vobu_start + this->vobu.blockN, 1, buf, len);
   if(result <= 0) {
     printerr("Error reading from DVD.");
     pthread_mutex_unlock(&this->vm_lock);
