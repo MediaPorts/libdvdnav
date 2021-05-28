@@ -484,10 +484,13 @@ static int32_t dvdnav_get_vobu(dvdnav_t *this, dsi_t *nav_dsi, pci_t *nav_pci, d
  */
 
 dvdnav_status_t dvdnav_get_next_block(dvdnav_t *this, uint8_t *buf,
-                                      int32_t *event, int32_t *len) {
+                                      size_t input_len, int32_t *event,
+                                      int32_t *len) {
   unsigned char *block;
   dvdnav_status_t status;
 
+  if (input_len < DVD_VIDEO_LB_LEN)
+    return DVDNAV_STATUS_ERR;
   block = buf;
   status = dvdnav_get_next_cache_block(this, &block, event, len);
   if (status == DVDNAV_STATUS_OK && block != buf) {
