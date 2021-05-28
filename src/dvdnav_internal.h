@@ -66,6 +66,8 @@ static inline int _private_gettimeofday( struct timeval *tv, void *tz )
 # define off_t off64_t
 #endif
 
+#include <stdio.h>
+
 /* where should libdvdnav write its messages (stdout/stderr) */
 #define MSG_OUT stderr
 
