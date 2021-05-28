@@ -159,8 +159,9 @@ into the file 'dvdtest.c'.
 
 int main(int argc, char **argv) {
   dvdnav_t *dvdnav;
-  int finished, len, event;
+  int finished, event;
   uint8_t buf[2050];
+  size_t len;
 
   /* Open the DVD */
   dvdnav_open(&dvdnav, "/dev/dvd");
