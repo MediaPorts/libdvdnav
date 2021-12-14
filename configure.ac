@@ -99,11 +99,6 @@ AC_SUBST(THREAD_CFLAGS)
 
 PKG_CHECK_MODULES([DVDREAD], [dvdread >= ${DVDREAD_MIN_VERSION}])
 
-dnl ---------------------------------------------
-dnl Check for bitfield compiler flag
-dnl ---------------------------------------------
-CC_CHECK_CFLAG_APPEND([-mno-ms-bitfields])
-
 dnl check for -Wall -Wextra support
 CC_CHECK_CFLAG_APPEND([-Wall -Wsign-compare -Wextra])
 
