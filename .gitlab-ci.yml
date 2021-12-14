@@ -45,7 +45,7 @@ build-macos:
         expire_in: 1 week
 
 build-win64:
-    image: registry.videolan.org/vlc-debian-win64:20201106143728
+    image: registry.videolan.org/vlc-debian-win64:20210521080153
     stage: build
     tags:
         - docker
@@ -73,7 +73,7 @@ build-win64:
         expire_in: 1 week
 
 build-win32:
-    image: registry.videolan.org/vlc-debian-win32:20201106141924
+    image: registry.videolan.org/vlc-debian-win32:20210521074247
     stage: build
     tags:
         - docker
