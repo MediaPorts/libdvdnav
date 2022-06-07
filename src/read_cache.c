@@ -55,6 +55,7 @@ typedef struct read_cache_chunk_s {
   int32_t      cache_read_count;   /* this many sectors are already read */
   size_t       cache_block_count;  /* this many sectors will go in this chunk */
   size_t       cache_malloc_size;
+  size_t       cache_buffer_size;
   int          cache_valid;
   int          usage_count;  /* counts how many buffers where issued from this chunk */
 } read_cache_chunk_t;
@@ -197,10 +198,14 @@ void dvdnav_pre_cache_blocks(read_cache_t *self, int sector, size_t block_count)
          * Some DVDs I have seen venture to 450 blocks.
          * This is so that fewer realloc's happen if at all.
          */
+        size_t buff_size =
+          (block_count > 500 ? block_count : 500) * DVD_VIDEO_LB_LEN + ALIGNMENT;
         self->chunk[i].cache_buffer_base =
-          malloc((block_count > 500 ? block_count : 500) * DVD_VIDEO_LB_LEN + ALIGNMENT);
+          malloc(buff_size);
         self->chunk[i].cache_buffer =
           (uint8_t *)(((uintptr_t)self->chunk[i].cache_buffer_base & ~((uintptr_t)(ALIGNMENT - 1))) + ALIGNMENT);
+        self->chunk[i].cache_buffer_size = buff_size -
+                (self->chunk[i].cache_buffer - self->chunk[i].cache_buffer_base);
         self->chunk[i].cache_malloc_size = block_count > 500 ? block_count : 500;
         dprintf("pre_cache DVD read malloc %d blocks\n",
           (block_count > 500 ? block_count : 500 ));
@@ -220,7 +225,8 @@ void dvdnav_pre_cache_blocks(read_cache_t *self, int sector, size_t block_count)
   pthread_mutex_unlock(&self->lock);
 }
 
-int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf) {
+int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf,
+                            size_t* len) {
   int i, use;
   int start;
   int size;
@@ -271,6 +277,7 @@ int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, 
     chunk = &self->chunk[use];
     read_ahead_buf = chunk->cache_buffer + chunk->cache_read_count * DVD_VIDEO_LB_LEN;
     *buf = chunk->cache_buffer + (sector - chunk->cache_start_sector) * DVD_VIDEO_LB_LEN;
+    *len = chunk->cache_buffer_size - (sector - chunk->cache_start_sector) * DVD_VIDEO_LB_LEN;
     chunk->usage_count++;
     pthread_mutex_unlock(&self->lock);
 
