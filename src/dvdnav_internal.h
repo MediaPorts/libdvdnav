@@ -86,6 +86,8 @@ typedef enum {
 
 typedef struct read_cache_s read_cache_t;
 
+#if DVDREAD_VERSION < DVDREAD_VERSION_CODE(7,0,0)
+
 /*
  * These are defined here because they are
  * not in ifo_types.h, they maybe one day
@@ -131,6 +133,8 @@ typedef struct {
   unsigned int available               : 1;
 #endif
 } ATTRIBUTE_PACKED spu_status_t;
+#endif
+
 #endif
 
 /*
