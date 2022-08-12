@@ -3,9 +3,9 @@ dnl Making releases: dvdnav_sub += 1; change DVDNAV_LT_* accordingly
 dnl
 dnl These are defined in m4 so they can be passed to AC_INIT
 dnl --------------------------------------------------------------
-m4_define([dvdnav_major], [6])
-m4_define([dvdnav_minor], [1])
-m4_define([dvdnav_sub],   [1])
+m4_define([dvdnav_major], [7])
+m4_define([dvdnav_minor], [0])
+m4_define([dvdnav_sub],   [0])
 m4_define([dvdnav_pre],   [])
 
 AC_INIT([libdvdnav], [dvdnav_major.dvdnav_minor.dvdnav_sub[]dvdnav_pre])
@@ -27,7 +27,7 @@ DVDNAV_MINOR="dvdnav_minor"
 DVDNAV_SUB="dvdnav_sub"
 DVDNAV_PRE="dvdnav_pre"
 
-DVDREAD_MIN_VERSION="6.0.0"
+DVDREAD_MIN_VERSION="7.0.0"
 
 AC_SUBST(DVDNAV_MAJOR)
 AC_SUBST(DVDNAV_MINOR)
@@ -60,7 +60,7 @@ dnl  * in Linux, the library will be named
 dnl    libname.so.(DVDNAV_LT_CURRENT - DVDNAV_LT_AGE).DVDNAV_LT_AGE.DVDNAV_LT_REVISION
 
 DVDNAV_LT_CURRENT=8
-DVDNAV_LT_AGE=4
+DVDNAV_LT_AGE=5
 DVDNAV_LT_REVISION=0
 
 AC_SUBST(DVDNAV_LT_CURRENT)
@@ -98,11 +98,6 @@ AC_SUBST(THREAD_LIBS)
 AC_SUBST(THREAD_CFLAGS)
 
 PKG_CHECK_MODULES([DVDREAD], [dvdread >= ${DVDREAD_MIN_VERSION}])
-
-dnl ---------------------------------------------
-dnl Check for bitfield compiler flag
-dnl ---------------------------------------------
-CC_CHECK_CFLAG_APPEND([-mno-ms-bitfields])
 
 dnl check for -Wall -Wextra support
 CC_CHECK_CFLAG_APPEND([-Wall -Wsign-compare -Wextra])

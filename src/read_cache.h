@@ -41,6 +41,6 @@ void dvdnav_pre_cache_blocks(read_cache_t *self, int sector, size_t block_count)
  * The buffer handed in must be malloced to take one dvd block.
  * On a cache hit, a different buffer will be returned though.
  * Those buffers must _never_ be freed. */
-int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf);
+int dvdnav_read_cache_block(read_cache_t *self, int sector, size_t block_count, uint8_t **buf, size_t* len);
 
 #endif /* LIBDVDNAV_READ_CACHE_H */

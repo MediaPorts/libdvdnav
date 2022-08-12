@@ -224,7 +224,8 @@ dvdnav_status_t dvdnav_get_PGC_positioning_flag(dvdnav_t *self, int32_t *pgc_bas
  * See the dvdnav_events.h header for information on the various events.
  */
 dvdnav_status_t dvdnav_get_next_block(dvdnav_t *self, uint8_t *buf,
-                                      int32_t *event, int32_t *len);
+                                      size_t input_len, int32_t *event,
+                                      size_t *len);
 
 /*
  * This basically does the same as dvdnav_get_next_block. The only difference is
@@ -235,7 +236,7 @@ dvdnav_status_t dvdnav_get_next_block(dvdnav_t *self, uint8_t *buf,
  * dvdnav_free_cache_block().
  */
 dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *self, uint8_t **buf,
-                                            int32_t *event, int32_t *len);
+                                            int32_t *event, size_t *len);
 
 /*
  * All buffers which came from the internal cache (when dvdnav_get_next_cache_block()

@@ -81,7 +81,8 @@ int main(int argc, char **argv) {
    * and handles the returned events */
   printf("Reading...\n");
   while (!finished) {
-    int result, event, len;
+    int result, event;
+    size_t len;
     uint8_t *buf = mem;
 
     /* the main reading function */
