@@ -389,11 +389,7 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p, size_t buff_size
 #endif
 
     if(p[0] == 0x00) {
-#if DVDREAD_VERSION >= DVDREAD_VERSION_CODE(7,0,0)
       navRead_PCI(nav_pci, p+1, buff_size - 1);
-#else
-      navRead_PCI(nav_pci, p+1);
-#endif
     }
 
     p += nPacketLen;
@@ -403,11 +399,7 @@ static int32_t dvdnav_decode_packet(dvdnav_t *this, uint8_t *p, size_t buff_size
       nPacketLen = p[4] << 8 | p[5];
       p += 6;
       buff_size -= 6;
-#if DVDREAD_VERSION >= DVDREAD_VERSION_CODE(7,0,0)
       navRead_DSI(nav_dsi, p+1, buff_size - 1);
-#else
-      navRead_DSI(nav_dsi, p+1);
-#endif
     }
     return 1;
   }
