@@ -521,7 +521,7 @@ int64_t dvdnav_get_current_time(dvdnav_t *this) {
 }
 
 dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
-                                            int32_t *event, int32_t *len) {
+                                            int32_t *event, size_t *len) {
   dvd_state_t *state;
   int32_t result;
 

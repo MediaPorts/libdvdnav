@@ -82,14 +82,13 @@ int main(int argc, char **argv) {
   printf("Reading...\n");
   while (!finished) {
     int result, event;
+    size_t len;
     uint8_t *buf = mem;
 
     /* the main reading function */
 #if DVD_READ_CACHE
-    int len;
     result = dvdnav_get_next_cache_block(dvdnav, &buf, &event, &len);
 #else
-    size_t len;
     result = dvdnav_get_next_block(dvdnav, buf, &event, &len);
 #endif
 

@@ -236,7 +236,7 @@ dvdnav_status_t dvdnav_get_next_block(dvdnav_t *self, uint8_t *buf,
  * dvdnav_free_cache_block().
  */
 dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *self, uint8_t **buf,
-                                            int32_t *event, int32_t *len);
+                                            int32_t *event, size_t *len);
 
 /*
  * All buffers which came from the internal cache (when dvdnav_get_next_cache_block()

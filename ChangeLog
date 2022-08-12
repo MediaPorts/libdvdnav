@@ -6,6 +6,7 @@ libdvdnav (next)
  * add dvdnav_get_disk_region_mask API to get the reported version from the disk
  * dvdnav_get_next_block needs to provide the size of the data available in the
    buffer
+ * dvdnav_get_next_cache_block receives the size of the buffer as a size_t
 
 libdvdnav (6.1.1)
  * fix build issues
