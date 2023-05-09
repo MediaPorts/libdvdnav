@@ -41,12 +41,14 @@ libdvdnav_la_SOURCES = \
 
 libdvdnav_la_LDFLAGS = \
 	-version-info $(DVDNAV_LT_CURRENT):$(DVDNAV_LT_REVISION):$(DVDNAV_LT_AGE) \
-	-export-symbols-regex "^dvdnav"
+	-export-symbols-regex "^(dvdnav|vm)"
 libdvdnav_la_LIBADD = $(THREAD_LIBS) $(DVDREAD_LIBS)
 
 pkgincludedir = $(includedir)/dvdnav
 
 pkginclude_HEADERS = \
+	src/vm/vm.h \
+	src/vm/decoder.h \
 	src/dvdnav/dvdnav.h \
 	src/dvdnav/dvdnav_events.h \
 	src/dvdnav/dvd_types.h \

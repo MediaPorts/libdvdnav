@@ -143,6 +143,9 @@ link_t play_PGC_post(vm_t *vm) {
   Log3(vm, "play_PGC_post:");
 #endif
 
+  /* Set pgn to allow external detection of end of program chain */
+  (vm->state).pgN = (vm->state).pgc->nr_of_programs + 1;
+
   /* eval -> updates the state and returns either
      - some kind of jump (Jump(TT/SS/VTS_TTN/CallSS/link C/PG/PGC/PTTN)
      - just go to next PGC
