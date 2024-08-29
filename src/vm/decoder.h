@@ -24,6 +24,10 @@
 
 #include <sys/time.h>
 
+#ifdef _WIN32
+#include <WinSock2.h>
+#endif
+
 /* link command types */
 typedef enum {
   LinkNoLink  = 0,

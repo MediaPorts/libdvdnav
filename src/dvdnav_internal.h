@@ -43,7 +43,7 @@ static inline int _private_gettimeofday( struct timeval *tv, void *tz )
 {
   struct timeb t;
   ftime( &t );
-  tv->tv_sec = t.time;
+  tv->tv_sec = (long)t.time;
   tv->tv_usec = t.millitm * 1000;
   return 0;
 }
